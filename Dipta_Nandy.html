@@ -1,0 +1,45 @@
+{
+  "metadata": {
+    "language_info": {
+      "codemirror_mode": {
+        "name": "python",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.8"
+    },
+    "kernelspec": {
+      "name": "python",
+      "display_name": "Python (Pyodide)",
+      "language": "python"
+    }
+  },
+  "nbformat_minor": 4,
+  "nbformat": 4,
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "source": "Dipta Nandy",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": "Data Discovery , Processing , Loading Tasks:\n1.a. Identify mongo DB data model from csv file in terms of database, collections, documents.\n\nSolution -\n\nCSV file: MarketingDataset.csv\n\nFields: custAge,profession,marital,schooling,default,housing,loan,contact,month,day_of_week,campaign,pdays,previous,poutcome,emp.var.rate,cons.price.idx,cons.conf.idx,euribor3m,nr.employed,responded \n\nData:\n56,services,married,high.school,no,no,yes,telephone,may,mon,1,999,0,nonexistent,1.1,93.994,-36.4,4.857,5191,no\n\nMongoDB data model:\nDatabase: TermDepositMarketingDatabase\nCollection: BankClient\nCocuments:\n- custAge: 56\n  profession: services\n  marital: married\n  schooling: high.school\n  default: no\n  housing: no\n  loan: yes\n  contact: telephone\n  month: may\n  day_of_week: mon\n  campaign: 1\n  pdays: 999\n  previous: 0\n  poutcome: nonexistent\n  emp.var.rate: 1.1\n  cons.price.idx: 93.994\n  cons.conf.idx: -36.4\n  euribor3m: 4.857\n  nr.employed: 5191\n  responded: no\n",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": "Data Discovery , Processing , Loading Tasks:\n1.b. Populate the above data to mongo DB datastore.\n\nSolution -\n\nCSV file: MarketingDataset.csv\n\nmongoimport --file MarketingDataset.csv --collection my_collection --delimiter\n\nimport pymongo\nclient = pymongo.MongoClient()\ndb = client.my_database\ncollection = db.my_collection\nwith open('MarketingDataset.csv', 'r') as f:\n    data = csv.reader(f)\n    collection.insert_many(data)",
+      "metadata": {}
+    },
+    {
+      "cell_type": "markdown",
+      "source": "Data Discovery , Processing , Loading Tasks:\n1.c. Create five reports.\n\nSolution -\n\nRight mode to contact the customers\n\ndb.collection.find({\n  \"contact\": {\n    $in: [\"cellular\", \"telephone\"]\n  }\n}).count()\n\nHas the customer a housing loan\n\ndb.collection.find({\n  \"housing\": {\n    $in: [\"yes\", \"unknown\", \"no\"]\n  }\n}).count()\n\nHas the customer any other loan\n\ndb.collection.find({\n  \"loan\": {\n    $in: [\"yes\", \"unknown\", \"no\"]\n  }\n}).count()\n\nIs the customer a defaulter\n\ndb.collection.find({\n  \"default\": {\n    $in: [\"yes\", \"unknown\", \"no\"]\n  }\n}).count()\n\nMaritial Status of the Customer\n\ndb.collection.find({\n  \"default\": {\n    $in: [\"single\", \"unknown\", \"married\", \"divorced\"]\n  }\n}).count()",
+      "metadata": {}
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+Dipta Nandy
+
+Data Discovery , Processing , Loading Tasks:
+1.a. Identify mongo DB data model from csv file in terms of database, collections, documents.
+
+Solution -
+
+CSV file: MarketingDataset.csv
+
+Fields: custAge,profession,marital,schooling,default,housing,loan,contact,month,day_of_week,campaign,pdays,previous,poutcome,emp.var.rate,cons.price.idx,cons.conf.idx,euribor3m,nr.employed,responded 
+
+Data:
+56,services,married,high.school,no,no,yes,telephone,may,mon,1,999,0,nonexistent,1.1,93.994,-36.4,4.857,5191,no
+
+MongoDB data model:
+Database: TermDepositMarketingDatabase
+Collection: BankClient
+Cocuments:
+- custAge: 56
+  profession: services
+  marital: married
+  schooling: high.school
+  default: no
+  housing: no
+  loan: yes
+  contact: telephone
+  month: may
+  day_of_week: mon
+  campaign: 1
+  pdays: 999
+  previous: 0
+  poutcome: nonexistent
+  emp.var.rate: 1.1
+  cons.price.idx: 93.994
+  cons.conf.idx: -36.4
+  euribor3m: 4.857
+  nr.employed: 5191
+  responded: no
+
+Data Discovery , Processing , Loading Tasks:
+1.b. Populate the above data to mongo DB datastore.
+
+Solution -
+
+CSV file: MarketingDataset.csv
+
+mongoimport --file MarketingDataset.csv --collection my_collection --delimiter
+
+import pymongo
+client = pymongo.MongoClient()
+db = client.my_database
+collection = db.my_collection
+with open('MarketingDataset.csv', 'r') as f:
+    data = csv.reader(f)
+    collection.insert_many(data)
+
+Data Discovery , Processing , Loading Tasks:
+1.c. Create five reports.
+
+Solution -
+
+Right mode to contact the customers
+
+db.collection.find({
+  "contact": {
+    $in: ["cellular", "telephone"]
+  }
+}).count()
+
+Has the customer a housing loan
+
+db.collection.find({
+  "housing": {
+    $in: ["yes", "unknown", "no"]
+  }
+}).count()
+
+Has the customer any other loan
+
+db.collection.find({
+  "loan": {
+    $in: ["yes", "unknown", "no"]
+  }
+}).count()
+
+Is the customer a defaulter
+
+db.collection.find({
+  "default": {
+    $in: ["yes", "unknown", "no"]
+  }
+}).count()
+
+Maritial Status of the Customer
+
+db.collection.find({
+  "default": {
+    $in: ["single", "unknown", "married", "divorced"]
+  }
+}).count()
+
